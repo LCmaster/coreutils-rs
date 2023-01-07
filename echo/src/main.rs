@@ -27,6 +27,17 @@ mod tests {
     use assert_cmd::{Command, output};
     use predicates::prelude::*;
 
+    type TestResult = Result<(), Box<dyn std::error::Error>>;
+
+    fn test_cmd(args: &[&str], expected: &'static str) -> TestResult {
+        Command::cargo_bin("echo")?
+            .args(args)
+            .assert()
+            .success()
+            .stdout(expected);
+        Ok(())
+    }
+
     #[test]
     fn dies_no_arg() {
         let mut cmd = Command::cargo_bin("echo").unwrap();
@@ -34,14 +45,12 @@ mod tests {
     }
 
     #[test]
-    fn print_hello() {
-        let mut cmd = Command::cargo_bin("echo").unwrap();
-        cmd.arg("hello").assert().success().stdout("hello\n");
+    fn print_hello_world() -> TestResult {
+        test_cmd(&["hello,", "world!"], "hello, world!\n")
     }
 
     #[test]
-    fn print_hello_no_trailing_newline() {
-        let mut cmd = Command::cargo_bin("echo").unwrap();
-        cmd.args(vec!["-n", "hello"]).assert().success().stdout("hello");
+    fn print_hello_world_no_newline() -> TestResult {
+        test_cmd(&["-n", "hello,", "world!"], "hello, world!")
     }
 }
