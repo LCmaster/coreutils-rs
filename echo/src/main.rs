@@ -11,7 +11,6 @@ struct Arguments {
     disable_newline:bool,
     
     texts: Vec<String>
-
 }
 
 fn main() {
@@ -24,12 +23,12 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use assert_cmd::{Command, output};
+    use assert_cmd::{Command};
     use predicates::prelude::*;
 
     type TestResult = Result<(), Box<dyn std::error::Error>>;
 
-    fn test_cmd(args: &[&str], expected: &'static str) -> TestResult {
+    fn test_cmd(args: &[&str], expected: String) -> TestResult {
         Command::cargo_bin("echo")?
             .args(args)
             .assert()
@@ -45,12 +44,22 @@ mod tests {
     }
 
     #[test]
-    fn print_hello_world() -> TestResult {
-        test_cmd(&["hello,", "world!"], "hello, world!\n")
+    fn print_hello_world_1() -> TestResult {
+        test_cmd(&["hello,", "world!"], String::from("hello, world!\n"))
     }
 
     #[test]
-    fn print_hello_world_no_newline() -> TestResult {
-        test_cmd(&["-n", "hello,", "world!"], "hello, world!")
+    fn print_hello_world_1_no_newline() -> TestResult {
+        test_cmd(&["-n", "hello,", "world!"], String::from("hello, world!"))
+    }
+
+    #[test]
+    fn print_hello_world_2() -> TestResult {
+        test_cmd(&["hello, world!"], String::from("hello, world!\n"))
+    }
+
+    #[test]
+    fn print_hello_world_2_no_newline() -> TestResult {
+        test_cmd(&["-n", "hello, world!"], String::from("hello, world!"))
     }
 }
